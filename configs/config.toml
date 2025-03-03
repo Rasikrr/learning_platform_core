@@ -1,0 +1,47 @@
+[server]
+    host = "localhost"
+    required = false
+    port = "8081"
+
+[logger]
+    level = "info"
+
+[postgres]
+    max_conns = 10
+    min_conns = 3
+    max_idle_conn_time = "5m"
+
+[redis]
+    host = "localhost"
+    port = "6379"
+    db = 0
+
+[auth]
+    access_token_lifetime = "100m"
+    refresh_token_lifetime = "168h"
+
+[env]
+    [env.test]
+        type = "string"
+        name = "test"
+        value = "test"
+        envName = "TEST"
+        required = true
+    [env.test_duration]
+        type = "duration"
+        name = "test_duration"
+        value = "10s"
+        envName = "TEST_DURATION"
+        required = true
+    [env.test_float]
+        type = "float"
+        name = "test_float"
+        value = 10.5
+        envName = "TEST_FLOAT"
+        required = true
+    [env.test_bool]
+        type = "bool"
+        name = "test_bool"
+        value = true
+        envName = "TEST_BOOL"
+        required = true
