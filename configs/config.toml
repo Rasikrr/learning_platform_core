@@ -1,24 +1,28 @@
-[server]
+[http]
     host = "localhost"
-    required = false
+    required = true
     port = "8081"
 
 [logger]
     level = "info"
 
 [postgres]
+    required = true
     max_conns = 10
     min_conns = 3
-    max_idle_conn_time = "5m"
+    max_idle_conn_time = "10m"
 
 [redis]
-    host = "localhost"
-    port = "6379"
-    db = 0
+    required = true
+    pool_size = 10
+    min_idle_conns = 3
+    max_idle_conns = 10
+    read_timeout = "1m"
 
-[auth]
-    access_token_lifetime = "100m"
-    refresh_token_lifetime = "168h"
+
+[grpc]
+    required = true
+    port = 3009
 
 [env]
     [env.test]

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"github.com/Rasikrr/learning_platform_core/configs"
+	"context"
+	"github.com/Rasikrr/learning_platform_core/application"
 )
 
 const (
@@ -10,9 +10,9 @@ const (
 )
 
 func main() {
-	cfg, err := configs.Parse(appName)
-	if err != nil {
+	ctx := context.Background()
+	app := application.NewApp(ctx, appName)
+	if err := app.Start(ctx); err != nil {
 		panic(err)
 	}
-	fmt.Printf("%+v\n", cfg.Env)
 }

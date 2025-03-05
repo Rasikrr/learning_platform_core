@@ -53,7 +53,10 @@ func (v Variables) Collect(envs map[string]string) error {
 		if err != nil {
 			return err
 		}
-		v[name] = val
+		if _, ok := v[name]; !ok {
+			v[name] = val
+			continue
+		}
 	}
 	return nil
 }
@@ -126,6 +129,7 @@ func (v Variables) Validate() error {
 func (v Variable) Validate() error {
 	switch v.Type {
 	case typeString:
+		fmt.Println(v)
 		if _, ok := v.Value.(string); !ok {
 			return fmt.Errorf("value for %s is not string", v.Name)
 		}
@@ -156,10 +160,11 @@ func (v Variable) Validate() error {
 	return nil
 }
 
+// nolint: unparam
 func parse(name string, val any) (Variable, error) {
 	str, ok := val.(string)
 	if !ok {
-		return Variable{}, fmt.Errorf("value for %s is not string", name)
+		str = ""
 	}
 	numVal, err := strconv.Atoi(str)
 	if err == nil {

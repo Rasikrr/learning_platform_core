@@ -1,0 +1,92 @@
+package http
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"github.com/Rasikrr/learning_platform_core/configs"
+	"github.com/go-chi/chi/v5"
+	"log"
+	"net/http"
+	"time"
+)
+
+const (
+	readTimeout  = time.Minute
+	writeTimeout = time.Minute
+	idleTimeout  = 3 * time.Minute
+)
+
+type Server struct {
+	port        string
+	host        string
+	srv         *http.Server
+	middlewares []Middleware
+	router      *chi.Mux
+}
+
+func NewServer(_ context.Context, cfg *configs.Config) *Server {
+	router := chi.NewRouter()
+
+	srv := &Server{
+		port: cfg.HTTP.Port,
+		host: cfg.HTTP.Host,
+		srv: &http.Server{
+			Addr:         address(cfg.HTTP.Host, cfg.HTTP.Port),
+			Handler:      router,
+			ReadTimeout:  readTimeout,
+			WriteTimeout: writeTimeout,
+			IdleTimeout:  idleTimeout,
+		},
+		router: router,
+	}
+	srv.WithMiddlewares(NewCORSMiddleware())
+	srv.WithMiddlewares(NewRecoverMiddleware())
+
+	return srv
+}
+
+func (s *Server) WithControllers(controllers ...Controller) {
+	for _, c := range controllers {
+		c.Init(s.router)
+	}
+}
+
+func (s *Server) WithMiddlewares(middlewares ...Middleware) {
+	s.middlewares = append(s.middlewares, middlewares...)
+}
+
+func (s *Server) Start(_ context.Context) error {
+	s.Register()
+	log.Println("starting http server")
+	if err := s.srv.ListenAndServe(); err != nil {
+		if errors.Is(err, http.ErrServerClosed) {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func (s *Server) Register() {
+	s.registerMiddlewares()
+}
+
+func (s *Server) registerMiddlewares() {
+	for _, m := range s.middlewares {
+		s.router.Use(m.Handle)
+	}
+}
+
+func (s *Server) Close(ctx context.Context) error {
+	if err := s.srv.Shutdown(ctx); err != nil {
+		log.Printf("HTTP server shutdown error: %v", err)
+		return fmt.Errorf("HTTP server shutdown error: %w", err)
+	}
+	log.Println("HTTP server closed")
+	return nil
+}
+
+func address(host, port string) string {
+	return host + ":" + port
+}

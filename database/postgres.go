@@ -1,8 +1,10 @@
-package databases
+package database
 
 import (
 	"context"
 	"github.com/Rasikrr/learning_platform_core/configs"
+	"github.com/Rasikrr/learning_platform_core/configs/appenv"
+	"github.com/avast/retry-go"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -16,7 +18,7 @@ type Postgres struct {
 
 // nolint: gosec
 func NewPostgres(ctx context.Context, cfg *configs.Config) (*Postgres, error) {
-	conConfig, err := pgxpool.ParseConfig(cfg.Postgres.DSN)
+	conConfig, err := pgxpool.ParseConfig(cfg.Env.Get(appenv.PostgresDSN).GetString())
 	if err != nil {
 		return nil, err
 	}
@@ -24,11 +26,23 @@ func NewPostgres(ctx context.Context, cfg *configs.Config) (*Postgres, error) {
 	conConfig.MaxConns = int32(cfg.Postgres.MaxConns)
 	conConfig.MinConns = int32(cfg.Postgres.MinConns)
 	conConfig.MaxConnIdleTime = cfg.Postgres.MaxIdleConnIdleTime
+
 	pool, err := pgxpool.NewWithConfig(ctx, conConfig)
 	if err != nil {
 		return nil, err
 	}
-	if err = pool.Ping(ctx); err != nil {
+
+	err = retry.Do(func() error {
+		return pool.Ping(ctx)
+	},
+		retry.Attempts(3),
+		retry.Delay(1*time.Second),
+		retry.OnRetry(func(_ uint, err error) {
+			log.Printf("Failed to connect to database: %v\n", err)
+		}),
+	)
+
+	if err != nil {
 		return nil, err
 	}
 	return &Postgres{
@@ -103,7 +117,8 @@ func (p *Postgres) SendBatch(ctx context.Context, b *pgx.Batch) pgx.BatchResults
 	return p.pool.SendBatch(ctx, b)
 }
 
-func (p *Postgres) Close() {
+func (p *Postgres) Close(_ context.Context) error {
 	p.pool.Close()
 	log.Println("Postgres closed gracefully")
+	return nil
 }
