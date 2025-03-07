@@ -17,7 +17,7 @@ type cache struct {
 	prefix string
 }
 
-func NewRedisCache(_ context.Context, cfg *configs.Config) (Cache, error) {
+func NewRedisCache(ctx context.Context, cfg *configs.Config) (Cache, error) {
 	addr := hostPort(
 		cfg.Env.Get(appenv.RedisHost).GetString(),
 		cfg.Env.Get(appenv.RedisPort).GetInt(),
@@ -35,6 +35,10 @@ func NewRedisCache(_ context.Context, cfg *configs.Config) (Cache, error) {
 	}
 
 	client := redis.NewClient(opt)
+	
+	if err := client.Ping(ctx).Err(); err != nil {
+		return nil, err
+	}
 
 	return &cache{
 		client: client,
