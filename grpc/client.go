@@ -23,3 +23,11 @@ func NewClientWithOptions(_ context.Context, addr string, opts ...grpc.DialOptio
 		conn: conn,
 	}, nil
 }
+
+func (c *Client) Invoke(ctx context.Context, method string, args, reply any, opts ...grpc.CallOption) error {
+	return c.conn.Invoke(ctx, method, args, reply, opts...)
+}
+
+func (c *Client) NewStream(ctx context.Context, desc *grpc.StreamDesc, method string, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	return c.conn.NewStream(ctx, desc, method, opts...)
+}
