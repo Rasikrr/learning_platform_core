@@ -41,6 +41,10 @@ func (s *Server) Close(_ context.Context) error {
 	return nil
 }
 
+func (s *Server) Srv() *grpc.Server {
+	return s.server
+}
+
 func (s *Server) addr(host string) string {
 	return fmt.Sprintf("%s:%d", host, s.port)
 }
