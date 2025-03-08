@@ -106,3 +106,11 @@ func (a *App) Postgres() *database.Postgres {
 func (a *App) HTTPServer() *http.Server {
 	return a.httpServer
 }
+
+func (a *App) Redis() redis.Cache {
+	return a.redis
+}
+
+func (a *App) Config() *configs.Config {
+	return a.config
+}
