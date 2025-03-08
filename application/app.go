@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"syscall"
 )
 
 type App struct {
@@ -87,8 +88,7 @@ func (a *App) Close(ctx context.Context) error {
 
 func (a *App) GracefulShutdown(ctx context.Context, stopChan chan struct{}) {
 	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan)
-	<-sigChan
+	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	if err := a.Close(ctx); err != nil {
 		log.Printf("error while closing app: %v", err)
 	}
