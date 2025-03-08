@@ -3,6 +3,7 @@ package application
 import (
 	"context"
 	"github.com/Rasikrr/learning_platform_core/redis"
+	"log"
 )
 
 func (a *App) initRedis(ctx context.Context) error {
@@ -14,6 +15,7 @@ func (a *App) initRedis(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	log.Println("redis initialized")
 	a.closers.Add(a.redis)
 	return nil
 }
