@@ -42,7 +42,7 @@ func NewServer(_ context.Context, cfg *configs.Config) *Server {
 	}
 	srv.WithMiddlewares(NewCORSMiddleware())
 	srv.WithMiddlewares(NewRecoverMiddleware())
-
+	srv.registerMiddlewares()
 	return srv
 }
 
@@ -57,7 +57,6 @@ func (s *Server) WithMiddlewares(middlewares ...Middleware) {
 }
 
 func (s *Server) Start(_ context.Context) error {
-	s.Register()
 	log.Println("starting http server")
 	if err := s.srv.ListenAndServe(); err != nil {
 		if errors.Is(err, http.ErrServerClosed) {
@@ -66,10 +65,6 @@ func (s *Server) Start(_ context.Context) error {
 		return err
 	}
 	return nil
-}
-
-func (s *Server) Register() {
-	s.registerMiddlewares()
 }
 
 func (s *Server) registerMiddlewares() {
