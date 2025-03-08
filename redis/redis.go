@@ -35,7 +35,7 @@ func NewRedisCache(ctx context.Context, cfg *configs.Config) (Cache, error) {
 	}
 
 	client := redis.NewClient(opt)
-	
+
 	if err := client.Ping(ctx).Err(); err != nil {
 		return nil, err
 	}
