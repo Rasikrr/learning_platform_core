@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log"
 	"net"
 	"runtime/debug"
@@ -53,6 +55,7 @@ func (s *Server) addr(host string) string {
 func newGrpcServer() *grpc.Server {
 	return grpc.NewServer(
 		grpc.StreamInterceptor(streamPanicRecoveryInterceptor),
+		grpc.UnaryInterceptor(unaryPanicRecoveryInterceptor),
 	)
 }
 
@@ -68,4 +71,19 @@ func streamPanicRecoveryInterceptor(
 		}
 	}()
 	return handler(srv, ss)
+}
+
+func unaryPanicRecoveryInterceptor(
+	ctx context.Context,
+	req interface{},
+	_ *grpc.UnaryServerInfo,
+	handler grpc.UnaryHandler,
+) (resp interface{}, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic in unary: %v\n%s", r, debug.Stack())
+			err = status.Errorf(codes.Internal, "internal server error")
+		}
+	}()
+	return handler(ctx, req)
 }
