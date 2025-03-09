@@ -129,7 +129,6 @@ func (v Variables) Validate() error {
 func (v Variable) Validate() error {
 	switch v.Type {
 	case typeString:
-		fmt.Println(v)
 		if _, ok := v.Value.(string); !ok {
 			return fmt.Errorf("value for %s is not string", v.Name)
 		}

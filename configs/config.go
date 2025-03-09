@@ -61,7 +61,10 @@ func Parse(appName string) (Config, error) {
 	if err := config.Env.Validate(); err != nil {
 		return Config{}, err
 	}
-
+	// 6) validate config
+	if err := config.Validate(); err != nil {
+		return Config{}, err
+	}
 	return config, nil
 }
 
@@ -104,6 +107,20 @@ func (c *Config) loadFromFile() error {
 	}
 	if _, err := toml.DecodeFile(fileName, c); err != nil {
 		return fmt.Errorf("failed to decode config file: %w", err)
+	}
+	return nil
+}
+
+func (c *Config) Validate() error {
+	for _, v := range []func() error{
+		c.HTTP.Validate,
+		c.Postgres.Validate,
+		c.Redis.Validate,
+		c.GRPC.Validate,
+	} {
+		if err := v(); err != nil {
+			return err
+		}
 	}
 	return nil
 }
