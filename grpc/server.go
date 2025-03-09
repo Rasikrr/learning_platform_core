@@ -7,6 +7,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"runtime/debug"
 )
 
 type Server struct {
@@ -50,5 +51,21 @@ func (s *Server) addr(host string) string {
 }
 
 func newGrpcServer() *grpc.Server {
-	return grpc.NewServer()
+	return grpc.NewServer(
+		grpc.StreamInterceptor(streamPanicRecoveryInterceptor),
+	)
+}
+
+func streamPanicRecoveryInterceptor(
+	srv interface{},
+	ss grpc.ServerStream,
+	_ *grpc.StreamServerInfo,
+	handler grpc.StreamHandler,
+) error {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic in stream: %v\n%s", r, debug.Stack())
+		}
+	}()
+	return handler(srv, ss)
 }
