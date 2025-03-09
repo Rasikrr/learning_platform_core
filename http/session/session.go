@@ -11,9 +11,9 @@ type Session struct {
 	claims map[string]any
 }
 
-func NewSession(Id, email string, role enum.AccountRole, claims map[string]any) *Session {
+func NewSession(id, email string, role enum.AccountRole, claims map[string]any) *Session {
 	return &Session{
-		userID: Id,
+		userID: id,
 		email:  email,
 		role:   role,
 		claims: claims,

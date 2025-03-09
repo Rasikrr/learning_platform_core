@@ -16,6 +16,7 @@ func TestGenerateJWT(t *testing.T) {
 	t.Log(token)
 }
 
+// nolint
 func TestParseJWT(t *testing.T) {
 	ses, refresh, err := ParseJwt("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3JvbGUiOiJ1c2VyIiwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiZXhwIjoxNzQxNTQxMTU4LCJpc19yZWZyZXNoIjpmYWxzZSwidXNlcl9pZCI6IjEyMzQifQ.wRKMJSraYhvZUzOBCHr7A5brst0q-AZq3kS6mrJk4Jo")
 	require.Nil(t, ses)
