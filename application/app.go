@@ -68,6 +68,11 @@ func (a *App) Start(ctx context.Context) error {
 }
 
 func (a *App) start(ctx context.Context) error {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Printf("panic recovered: %v", err)
+		}
+	}()
 	g := errgroup.Group{}
 	for _, s := range a.starters.starters {
 		g.Go(func() error {
