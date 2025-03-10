@@ -51,3 +51,7 @@ func (s *Session) AccountRole() enum.AccountRole {
 func (s *Session) SetClaim(k string, v any) {
 	s.claims[k] = v
 }
+
+func (s *Session) SetClaims(claims map[string]any) {
+	s.claims = claims
+}
