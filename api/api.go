@@ -2,6 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	coreError "github.com/Rasikrr/learning_platform_core/errors"
 	"io"
 	"net/http"
 )
@@ -75,9 +77,16 @@ func GetData(r *http.Request, data interface{}) error {
 func SendError(w http.ResponseWriter, statusCode int, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
+
 	r := ErrorResponse{
 		Error:  err.Error(),
 		Status: statusCode,
+	}
+	var coreErr *coreError.CoreError
+
+	if errors.As(err, &coreErr) {
+		r.Error = coreErr.Message
+		r.Status = coreErr.Code
 	}
 	bb, _ := json.Marshal(r)
 	w.Write(bb)
