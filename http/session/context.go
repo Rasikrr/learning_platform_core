@@ -8,11 +8,11 @@ import (
 var ErrSessionNotFound = errors.New("session not found")
 
 const (
-	sessionKey = "_session"
+	SessionKey = "_session"
 )
 
 func GetFromCtx(ctx context.Context) (*Session, error) {
-	ses, ok := ctx.Value(sessionKey).(*Session)
+	ses, ok := ctx.Value(SessionKey).(*Session)
 	if !ok {
 		return nil, ErrSessionNotFound
 	}
