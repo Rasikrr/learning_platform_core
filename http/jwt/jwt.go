@@ -5,6 +5,7 @@ import (
 	"github.com/Rasikrr/learning_platform_core/enum"
 	"github.com/Rasikrr/learning_platform_core/http/session"
 	"github.com/golang-jwt/jwt"
+	"strings"
 	"time"
 )
 
@@ -40,6 +41,9 @@ func GenerateJwt(ses *session.Session, ttl time.Duration, isRefresh bool) (strin
 }
 
 func ParseJwt(tokenString string) (*session.Session, bool, error) {
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+	tokenString = strings.TrimPrefix(tokenString, "bearer ")
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, errors.New("unexpected signing method")
