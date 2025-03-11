@@ -76,8 +76,6 @@ func GetData(r *http.Request, data interface{}) error {
 // nolint: errcheck
 func SendError(w http.ResponseWriter, statusCode int, err error) {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
 	r := ErrorResponse{
 		Error:  err.Error(),
 		Status: statusCode,
@@ -89,5 +87,6 @@ func SendError(w http.ResponseWriter, statusCode int, err error) {
 		r.Status = coreErr.Code
 	}
 	bb, _ := json.Marshal(r)
+	w.WriteHeader(r.Status)
 	w.Write(bb)
 }
