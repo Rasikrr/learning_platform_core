@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Rasikrr/learning_platform_core/configs"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"net/http"
 	"time"
@@ -71,6 +72,10 @@ func (s *Server) registerMiddlewares() {
 	for _, m := range s.middlewares {
 		s.router.Use(m.Handle)
 	}
+	// use default chi middlewares
+	s.router.Use(middleware.RequestID)
+	s.router.Use(middleware.RealIP)
+	s.router.Use(middleware.Logger)
 }
 
 func (s *Server) Close(ctx context.Context) error {
