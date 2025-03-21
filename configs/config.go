@@ -5,6 +5,7 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/Rasikrr/learning_platform_core/configs/appenv"
 	"github.com/Rasikrr/learning_platform_core/enum"
+	"github.com/Rasikrr/learning_platform_core/interfaces"
 	"github.com/joho/godotenv"
 	"log"
 	"os"
@@ -23,6 +24,7 @@ type Config struct {
 	Postgres    *PostgresConfig  `toml:"postgres"`
 	Redis       *RedisConfig     `toml:"redis"`
 	GRPC        *GRPCConfig      `toml:"grpc"`
+	NATS        *NATSConfig      `toml:"nats"`
 	Variables   *Variables       `toml:"env"`
 	Env         *Variables       `toml:"-"`
 }
@@ -112,15 +114,20 @@ func (c *Config) loadFromFile() error {
 }
 
 func (c *Config) Validate() error {
-	for _, v := range []func() error{
-		c.HTTP.Validate,
-		c.Postgres.Validate,
-		c.Redis.Validate,
-		c.GRPC.Validate,
+	for _, v := range []interfaces.Validatable{
+		c.HTTP,
+		c.Postgres,
+		c.Redis,
+		c.GRPC,
+		c.NATS,
 	} {
-		if err := v(); err != nil {
+		if err := v.Validate(); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (c *Config) GetEnvironment() enum.Environment {
+	return c.Environment
 }

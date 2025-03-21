@@ -1,6 +1,6 @@
 [http]
     host = "localhost"
-    required = true
+    required = false
     port = "8081"
 
 [logger]
@@ -12,8 +12,14 @@
     min_conns = 3
     max_idle_conn_time = "10m"
 
-[redis]
+[nats]
     required = true
+    dsn = "localhost:4222"
+    queue = ""
+
+
+[redis]
+    required = false
     pool_size = 10
     min_idle_conns = 3
     max_idle_conns = 10
@@ -21,7 +27,7 @@
 
 
 [grpc]
-    required = true
+    required = false
     port = 3009
 
 [env]

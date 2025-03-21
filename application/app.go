@@ -2,6 +2,7 @@ package application
 
 import (
 	"context"
+	"github.com/Rasikrr/learning_platform_core/brokers/nats"
 	"github.com/Rasikrr/learning_platform_core/configs"
 	"github.com/Rasikrr/learning_platform_core/database"
 	coreGrpc "github.com/Rasikrr/learning_platform_core/grpc"
@@ -21,8 +22,13 @@ type App struct {
 	postgres   *database.Postgres
 	httpServer *http.Server
 	grpcServer *coreGrpc.Server
-	starters   *Starters
-	closers    *Closers
+
+	publisher          nats.Publisher
+	subscriber         nats.Subscriber
+	subscriberHandlers []nats.SubscriberHandler
+
+	starters *Starters
+	closers  *Closers
 }
 
 func NewApp(ctx context.Context, name string) *App {
@@ -53,10 +59,16 @@ func NewAppWithConfig(ctx context.Context, name string, cfg *configs.Config) *Ap
 	if err := app.initHTTP(ctx); err != nil {
 		log.Fatalf("failed to init http: %v", err)
 	}
+	if err := app.initNats(ctx); err != nil {
+		log.Fatalf("failed to init nats: %v", err)
+	}
+
 	return app
 }
 
 func (a *App) Start(ctx context.Context) error {
+	a.initSubscribers(ctx)
+
 	stopChan := make(chan struct{})
 	go a.GracefulShutdown(ctx, stopChan)
 	if err := a.start(ctx); err != nil {
@@ -121,4 +133,12 @@ func (a *App) Redis() redis.Cache {
 
 func (a *App) Config() *configs.Config {
 	return a.config
+}
+
+func (a *App) WithSubscribers(handlers ...nats.SubscriberHandler) {
+	a.subscriberHandlers = append(a.subscriberHandlers, handlers...)
+}
+
+func (a *App) initSubscribers(_ context.Context) {
+	a.subscriber.WithHandlers(a.subscriberHandlers...)
 }
