@@ -98,11 +98,13 @@ func (v Variable) GetInt() int {
 	if v.Type != typeInt {
 		return -1
 	}
-	val, ok := v.Value.(int64)
-	if !ok {
-		return 0
+	switch v.Value.(type) {
+	case int:
+		return v.Value.(int)
+	case int64:
+		return int(v.Value.(int64))
 	}
-	return int(val)
+	return 0
 }
 
 func (v Variable) GetDuration() time.Duration {
@@ -134,7 +136,7 @@ func (v Variable) Validate() error {
 		}
 	case typeInt:
 		switch v.Value.(type) {
-		case int8, int16, int32, int64, int:
+		case int, int64:
 			return nil
 		default:
 			return fmt.Errorf("value for %s is not int", v.Name)

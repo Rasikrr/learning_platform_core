@@ -19,7 +19,7 @@
 
 
 [redis]
-    required = false
+    required = true
     pool_size = 10
     min_idle_conns = 3
     max_idle_conns = 10
@@ -27,7 +27,7 @@
 
 
 [grpc]
-    required = false
+    required = true
     port = 3009
 
 [env]
