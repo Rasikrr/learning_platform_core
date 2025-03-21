@@ -98,11 +98,11 @@ func (v Variable) GetInt() int {
 	if v.Type != typeInt {
 		return -1
 	}
-	switch v.Value.(type) {
+	switch val := v.Value.(type) {
 	case int:
-		return v.Value.(int)
+		return val
 	case int64:
-		return int(v.Value.(int64))
+		return int(val)
 	}
 	return 0
 }
