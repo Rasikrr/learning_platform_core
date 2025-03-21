@@ -134,9 +134,7 @@ func (v Variable) Validate() error {
 		}
 	case typeInt:
 		switch v.Value.(type) {
-		case int:
-			return nil
-		case int64:
+		case int8, int16, int32, int64, int:
 			return nil
 		default:
 			return fmt.Errorf("value for %s is not int", v.Name)
