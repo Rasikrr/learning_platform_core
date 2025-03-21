@@ -135,6 +135,14 @@ func (a *App) Config() *configs.Config {
 	return a.config
 }
 
+func (a *App) NATSPublisher() nats.Publisher {
+	return a.publisher
+}
+
+func (a *App) NATSSubscriber() nats.Subscriber {
+	return a.subscriber
+}
+
 func (a *App) WithSubscribers(handlers ...nats.SubscriberHandler) {
 	a.subscriberHandlers = append(a.subscriberHandlers, handlers...)
 }
