@@ -98,11 +98,11 @@ func (v Variable) GetInt() int {
 	if v.Type != typeInt {
 		return -1
 	}
-	val, ok := v.Value.(int)
+	val, ok := v.Value.(int64)
 	if !ok {
 		return 0
 	}
-	return val
+	return int(val)
 }
 
 func (v Variable) GetDuration() time.Duration {
@@ -133,7 +133,7 @@ func (v Variable) Validate() error {
 			return fmt.Errorf("value for %s is not string", v.Name)
 		}
 	case typeInt:
-		if _, ok := v.Value.(int); !ok {
+		if _, ok := v.Value.(int64); !ok {
 			return fmt.Errorf("value for %s is not int", v.Name)
 		}
 	case typeFloat:

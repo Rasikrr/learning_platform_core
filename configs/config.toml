@@ -55,3 +55,9 @@
         value = true
         envName = "TEST_BOOL"
         required = true
+    [env.test_int]
+        type = "int"
+        name = "test_int"
+        value = 1
+        envName = "TEST_INT"
+        required = true
