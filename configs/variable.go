@@ -133,7 +133,12 @@ func (v Variable) Validate() error {
 			return fmt.Errorf("value for %s is not string", v.Name)
 		}
 	case typeInt:
-		if _, ok := v.Value.(int64); !ok {
+		switch v.Value.(type) {
+		case int:
+			return nil
+		case int64:
+			return nil
+		default:
 			return fmt.Errorf("value for %s is not int", v.Name)
 		}
 	case typeFloat:
