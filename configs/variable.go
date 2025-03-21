@@ -126,26 +126,22 @@ func (v Variables) Validate() error {
 	return nil
 }
 
-func (v *Variable) Validate() error {
-	var err error
+func (v Variable) Validate() error {
 	switch v.Type {
 	case typeString:
 		if _, ok := v.Value.(string); !ok {
 			return fmt.Errorf("value for %s is not string", v.Name)
 		}
 	case typeInt:
-		v.Value, err = strconv.Atoi(v.Value.(string))
-		if err != nil {
+		if _, ok := v.Value.(int); !ok {
 			return fmt.Errorf("value for %s is not int", v.Name)
 		}
 	case typeFloat:
-		v.Value, err = strconv.ParseFloat(v.Value.(string), 64)
-		if err != nil {
+		if _, ok := v.Value.(float64); !ok {
 			return fmt.Errorf("value for %s is not float", v.Name)
 		}
 	case typeBool:
-		v.Value, err = strconv.ParseBool(v.Value.(string))
-		if err != nil {
+		if _, ok := v.Value.(bool); !ok {
 			return fmt.Errorf("value for %s is not bool", v.Name)
 		}
 	case typeDuration:
