@@ -11,7 +11,7 @@ type GRPCConfig struct {
 	Required bool `toml:"required"`
 }
 
-func (c *GRPCConfig) Validate() error {
+func (c GRPCConfig) Validate() error {
 	if !c.Required {
 		return nil
 	}

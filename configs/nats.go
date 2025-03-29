@@ -10,7 +10,7 @@ type NATSConfig struct {
 	Queue    string `toml:"queue"`
 }
 
-func (c *NATSConfig) Validate() error {
+func (c NATSConfig) Validate() error {
 	if !c.Required {
 		return nil
 	}

@@ -12,7 +12,7 @@ type HTTPConfig struct {
 	Required bool   `toml:"required"`
 }
 
-func (c *HTTPConfig) Validate() error {
+func (c HTTPConfig) Validate() error {
 	if !c.Required {
 		return nil
 	}

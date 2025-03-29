@@ -17,7 +17,7 @@ type RedisConfig struct {
 	ReadTimeout time.Duration `toml:"read_timeout"`
 }
 
-func (c *RedisConfig) Validate() error {
+func (c RedisConfig) Validate() error {
 	if !c.Required {
 		return nil
 	}

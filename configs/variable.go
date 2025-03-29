@@ -17,8 +17,8 @@ const (
 
 type Variables map[string]Variable
 
-func NewVariablesInstance() *Variables {
-	return &Variables{}
+func NewVariablesInstance() Variables {
+	return Variables{}
 }
 
 func (v Variables) Range() {

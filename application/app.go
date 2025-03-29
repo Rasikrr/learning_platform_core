@@ -148,5 +148,7 @@ func (a *App) WithSubscribers(handlers ...nats.SubscriberHandler) {
 }
 
 func (a *App) initSubscribers(_ context.Context) {
-	a.subscriber.WithHandlers(a.subscriberHandlers...)
+	if a.Config().NATS.Required && a.subscriber != nil {
+		a.subscriber.WithHandlers(a.subscriberHandlers...)
+	}
 }

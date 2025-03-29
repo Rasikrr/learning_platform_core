@@ -16,7 +16,7 @@ type PostgresConfig struct {
 	MaxIdleConnIdleTime time.Duration `toml:"max_idle_conn_time"`
 }
 
-func (c *PostgresConfig) Validate() error {
+func (c PostgresConfig) Validate() error {
 	if !c.Required {
 		return nil
 	}

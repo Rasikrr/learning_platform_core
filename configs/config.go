@@ -20,13 +20,13 @@ const (
 type Config struct {
 	Name        string           `toml:"name"`
 	Environment enum.Environment `toml:"-"`
-	HTTP        *HTTPConfig      `toml:"http"`
-	Postgres    *PostgresConfig  `toml:"postgres"`
-	Redis       *RedisConfig     `toml:"redis"`
-	GRPC        *GRPCConfig      `toml:"grpc"`
-	NATS        *NATSConfig      `toml:"nats"`
-	Variables   *Variables       `toml:"env"`
-	Env         *Variables       `toml:"-"`
+	HTTP        HTTPConfig       `toml:"http"`
+	Postgres    PostgresConfig   `toml:"postgres"`
+	Redis       RedisConfig      `toml:"redis"`
+	GRPC        GRPCConfig       `toml:"grpc"`
+	NATS        NATSConfig       `toml:"nats"`
+	Variables   Variables        `toml:"env"`
+	Env         Variables        `toml:"-"`
 }
 
 func initConfig(name string) Config {

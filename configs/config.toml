@@ -13,7 +13,7 @@
     max_idle_conn_time = "10m"
 
 [nats]
-    required = true
+    required = false
     dsn = "localhost:4222"
     queue = ""
 
